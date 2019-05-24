@@ -8,6 +8,8 @@ var app = express();
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
+app.get("/", (req, res) => res.send("Sab Sahi"));
+
 app.get("/secret", (req, res) =>
   res.sendFile(path.join(__dirname, "index.html"))
 );
