@@ -2,7 +2,9 @@ var express = require("express");
 const MongoClient = require("mongodb").MongoClient;
 const bodyParser = require("body-parser");
 const path = require("path");
-const url = "mongodb://localhost:27017/cardsdb";
+const PORT = process.env.PORT || 3000;
+const DB_NAME = process.env.DB_NAME;
+const URI = process.env.MONGODB_URI || 'mongodb://heroku_08879xmq:hh9bico0pvib5tumb1f6vsohj@ds257054.mlab.com:57054/heroku_08879xmq';
 var app = express();
 
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -15,15 +17,15 @@ app.get("/secret", (req, res) =>
 );
 
 app.post("/secret", function(req, response) {
-  MongoClient.connect(url, { useNewUrlParser: true }, function(err, db) {
+  MongoClient.connect(URI, { useNewUrlParser: true }, function(err, db) {
     if (err) throw err;
     else {
-      var dbo = db.db("mydb");
+      var dbo = db.db(DB_NAME);
       const KeyValuePair = {
         name: req.body.name.toLowerCase(),
         card: req.body.number + "_of_" + req.body.suit
       };
-      dbo.collection("customers").insertOne(KeyValuePair, function(err, res) {
+      dbo.collection("names").insertOne(KeyValuePair, function(err, res) {
         if (err) throw err;
         else {
           response.send("Inserted into DB");
@@ -38,16 +40,16 @@ app.post("/secret", function(req, response) {
 });
 
 app.get("/deleteAll", function(req, response) {
-  MongoClient.connect(url, { useNewUrlParser: true }, function(err, db) {
+  MongoClient.connect(URI, { useNewUrlParser: true }, function(err, db) {
     if (err) throw err;
     else {
-      var dbo = db.db("mydb");
-      // dbo.collection("customers")
+      var dbo = db.db(DB_NAME);
+      // dbo.collection("names")
       // .countDocuments('', (err,res)=>{
       //   console.log(res);
       //   response.send(`Deleted ${res}`);
       // })
-      dbo.collection("customers").deleteMany();
+      dbo.collection("names").deleteMany();
       response.send(`Deleted All`);
     }
     db.close();
@@ -61,11 +63,11 @@ app.get("/:params*", function(req, response) {
   // Get the param from url and search in the DB
   // Use find function to search through the DB
   var search = req.params.params.toLowerCase();
-  MongoClient.connect(url, { useNewUrlParser: true }, function(err, db) {
+  MongoClient.connect(URI, { useNewUrlParser: true }, function(err, db) {
     if (err) throw err;
     else {
-      var dbo = db.db("mydb");
-      dbo.collection("customers").findOne({ name: search }, function(req, res) {
+      var dbo = db.db(DB_NAME);
+      dbo.collection("names").findOne({ name: search }, function(req, res) {
         if (err || res === null) {
           response.send("<h1>404 Not Found</h1>");
         } else {
@@ -78,4 +80,4 @@ app.get("/:params*", function(req, response) {
   });
 });
 
-app.listen(3000 || process.env.PORT);
+app.listen(PORT);
