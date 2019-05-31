@@ -2,9 +2,9 @@ var express = require("express");
 const MongoClient = require("mongodb").MongoClient;
 const bodyParser = require("body-parser");
 const path = require("path");
-const PORT = process.env.PORT || 3000;
-const DB_NAME = process.env.DB_NAME;
-const URI = process.env.MONGODB_URI || 'mongodb://heroku_08879xmq:hh9bico0pvib5tumb1f6vsohj@ds257054.mlab.com:57054/heroku_08879xmq';
+const PORT = 3000;
+const DB_NAME = "cardsdb";
+const URI = "mongodb://localhost:27017/"
 var app = express();
 
 app.use(bodyParser.urlencoded({ extended: false }));
